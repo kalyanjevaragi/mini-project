@@ -4,61 +4,170 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
 <title>BLDEA Online Voting System — Admin Enhanced</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;600;700&display=swap" rel="stylesheet">
 <!-- SheetJS (XLSX) for real .xlsx export -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif}
-body{min-height:100vh;background:#25252b;display:flex;justify-content:center;align-items:flex-start;padding:30px}
-.hidden{display:none}
-  .container {
-  width: 100%;
-} 
-    img {
-  max-width: 100%;
-  height: auto;
-}
-  button, input, select {
-  width: 100%;
-  padding: 12px;
-  font-size: 16px;
-}  
-    @media (max-width: 600px) {
-  .box {
-    padding: 10px;
-    font-size: 16px;
+  *{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif}
+  body{
+    min-height:100vh;
+    background:#25252b;
+    display:flex;
+    justify-content:center;
+    align-items:flex-start;
+    padding:30px;
   }
-}
-.container{position:relative;width:400px;height:320px;border:2px solid #e46033;box-shadow:0 0 25px #e46033;overflow:hidden;background:#25252b}
-.curved-shape{position:absolute;right:0;top:-80px;width:450px;height:350px;background:linear-gradient(45deg,#25252b,#e46033);transform:rotate(10deg) skewY(40deg);transform-origin:bottom right;transition:1.5s ease;z-index:0}
-.container.active .curved-shape{transform:rotate(0deg) skewY(0deg)}
-.curved-shape2{position:absolute;left:250px;top:90%;width:550px;height:400px;background:#25252b;border-top:3px solid #e46033;transform:rotate(0deg) skewY(0deg);transform-origin:bottom left;transition:1.5s ease;z-index:0}
-.container.active .curved-shape2{transform:rotate(-12deg) skewY(-40deg)}
-.form-box{position:absolute;top:0;width:50%;height:100%;display:flex;flex-direction:column;justify-content:center;padding:40px;z-index:10;color:white}
-.form-box h2{font-size:32px;margin-bottom:15px}
-.input-box{margin-top:20px}
-.input-box input{width:100%;padding:12px;font-size:16px;background:transparent;border:none;border-bottom:2px solid #fff;color:white;transition:.4s}
-.input-box input:focus{border-bottom:2px solid #e46033}
-.btn{margin-top:15px;padding:12px;width:100%;border-radius:40px;border:2px solid #e46033;background:transparent;color:white;cursor:pointer;font-size:16px;font-weight:600;transition:0.4s}
-.btn:hover{background:#e46033}
-.switch{margin-top:12px;text-align:center}
-.switch span{color:#e46033;cursor:pointer;font-weight:600}
-.Login{left:0}
-.Register{right:0;opacity:0;pointer-events:none}
-.container.active .Login{transform:translateX(-100%);opacity:0}
-.container.active .Register{opacity:1;pointer-events:auto;transform:translateX(-100%)}
-header{position:fixed;top:10px;left:50%;transform:translateX(-50%);padding:12px 20px;color:white;background:linear-gradient(90deg,#ff6a00,#ffb347);display:flex;gap:12px;align-items:center;border-radius:10px;z-index:999}
-header .spacer{width:20px}
-.card{background:white;width:90%;max-width:850px;margin:90px auto;padding:25px;border-radius:12px;box-shadow:0 0 20px rgba(0,0,0,0.2)}
-.candidate{display:flex;align-items:center;gap:12px;border:1px solid #aaa;padding:12px;border-radius:8px;margin-top:10px}
-.candidate img{width:40px;height:40px;object-fit:cover;border-radius:6px}
-table{width:100%;margin-top:10px;border-collapse:collapse}
-th,td{padding:10px;border-bottom:1px solid #ddd}
-#voteMsg{font-size:18px;color:green;margin-top:10px}
-.adminBtns{display:flex;gap:10px;margin-top:12px}
-.file-input{display:flex;gap:8px;align-items:center}
-.small{width:150px;padding:8px}
+  .hidden{display:none}
+
+  /* images and form controls */
+  img{max-width:100%;height:auto}
+  button,input,select{width:100%;padding:12px;font-size:16px}
+
+  /* container: responsive (edge-to-edge on small screens, limited on large) */
+  .container{
+    position:relative;
+    width:90%;
+    max-width:420px;      /* control maximum width on large screens */
+    min-height:420px;     /* allow vertical space for content */
+    padding:22px;
+    border:2px solid #e46033;
+    box-shadow:0 0 25px rgba(228,96,51,0.4);
+    overflow:hidden;
+    background:#25252b;
+    border-radius:8px;
+    margin-top:12px;
+  }
+
+  /* decorative diagonal shapes — percentage-based so they scale */
+  .curved-shape{
+    position:absolute;
+    right:-10%;
+    top:-35%;
+    width:80%;
+    height:120%;
+    background:linear-gradient(45deg,#25252b,#e46033);
+    transform:rotate(10deg) skewY(40deg);
+    transform-origin:bottom right;
+    transition:1.5s ease;
+    z-index:0;
+  }
+  .container.active .curved-shape{transform:rotate(0deg) skewY(0deg)}
+
+  .curved-shape2{
+    position:absolute;
+    left:-10%;
+    bottom:-25%;
+    width:120%;
+    height:90%;
+    background:#25252b;
+    border-top:3px solid #e46033;
+    transform:rotate(0deg) skewY(0deg);
+    transform-origin:bottom left;
+    transition:1.5s ease;
+    z-index:0;
+  }
+  .container.active .curved-shape2{transform:rotate(-12deg) skewY(-40deg)}
+
+  /* form boxes: full width on mobile, side-by-side on larger screens */
+  .form-box{
+    position:relative; /* not absolute so it flows inside container on small screens */
+    width:100%;
+    height:auto;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    padding:10px 6px;
+    z-index:10;
+    color:white;
+  }
+  /* on wider screens we can position them side-by-side visually */
+  @media (min-width:900px){
+    .form-box{
+      position:absolute;
+      top:0;
+      width:50%;
+      height:100%;
+      padding:40px;
+    }
+    .form-box.Login{left:0}
+    .form-box.Register{right:0}
+  }
+
+  .form-box h1{font-size:18px;margin-bottom:6px}
+  .form-box h2{font-size:28px;margin-bottom:12px}
+
+  .input-box{margin-top:14px}
+  .input-box input{
+    width:100%;
+    padding:12px;
+    font-size:16px;
+    background:transparent;
+    border:none;
+    border-bottom:2px solid #fff;
+    color:white;
+    transition:.4s;
+  }
+  .input-box input:focus{border-bottom:2px solid #e46033; outline:none}
+
+  .btn{
+    margin-top:15px;
+    padding:12px;
+    width:100%;
+    border-radius:40px;
+    border:2px solid #e46033;
+    background:transparent;
+    color:white;
+    cursor:pointer;
+    font-size:16px;
+    font-weight:600;
+    transition:0.4s;
+  }
+  .btn:hover{background:#e46033}
+
+  .switch{margin-top:12px;text-align:center}
+  .switch span{color:#e46033;cursor:pointer;font-weight:600}
+
+  /* show/hide classes for login/register on small screens */
+  .Login{display:block}
+  .Register{display:none;opacity:0;pointer-events:none;transition:0.4s}
+
+  .container.active .Login{transform:translateX(-100%);opacity:0;pointer-events:none}
+  .container.active .Register{display:block;opacity:1;pointer-events:auto;transform:translateX(0)}
+
+  /* header and other cards (unchanged except responsive tweaks) */
+  header{
+    position:fixed;top:10px;left:50%;transform:translateX(-50%);
+    padding:12px 20px;color:white;background:linear-gradient(90deg,#ff6a00,#ffb347);
+    display:flex;gap:12px;align-items:center;border-radius:10px;z-index:999;
+  }
+  header .spacer{width:20px}
+
+  .card{
+    background:white;
+    width:90%;
+    max-width:850px;
+    margin:90px auto;
+    padding:25px;
+    border-radius:12px;
+    box-shadow:0 0 20px rgba(0,0,0,0.2)
+  }
+
+  .candidate{display:flex;align-items:center;gap:12px;border:1px solid #aaa;padding:12px;border-radius:8px;margin-top:10px}
+  .candidate img{width:40px;height:40px;object-fit:cover;border-radius:6px}
+  table{width:100%;margin-top:10px;border-collapse:collapse}
+  th,td{padding:10px;border-bottom:1px solid #ddd}
+  #voteMsg{font-size:18px;color:green;margin-top:10px}
+  .adminBtns{display:flex;gap:10px;margin-top:12px}
+  .file-input{display:flex;gap:8px;align-items:center}
+  .small{width:150px;padding:8px}
+
+  /* smaller screen text/padding tweaks */
+  @media (max-width:420px){
+    .container{padding:16px;min-height:480px}
+    .form-box h2{font-size:22px}
+    .btn{font-size:15px;padding:10px}
+    header{padding:8px 12px}
+  }
 </style>
 </head>
 <body>
@@ -84,6 +193,8 @@ th,td{padding:10px;border-bottom:1px solid #ddd}
         <p id="regMsg" style="color:yellow;margin-top:10px;"></p>
         <div class="switch">Already registered? <span onclick="toggleForm()">Login</span></div>
     </div>
+
+    <!-- decorative shapes -->
     <div class="curved-shape"></div>
     <div class="curved-shape2"></div>
 </div>
@@ -95,33 +206,36 @@ th,td{padding:10px;border-bottom:1px solid #ddd}
     <button class="btn small" id="adminBtn" onclick="openAdminLogin()" style="display:none">Admin</button>
     <button class="btn small" onclick="logout()">Logout</button>
 </header>
+
 <!-- VOTING PAGE -->
 <div id="vote" class="card hidden">
     <h2>Cast Your Vote</h2>
     <p id="voteStatus"></p>
     <form id="voteForm">
         <div id="candidateList"></div>
-        <button class="btn" id="voteButton"style="background:#222">Submit Vote</button>
+        <button class="btn" id="voteButton" style="background:#222">Submit Vote</button>
     </form>
     <p id="voteMsg"></p>
 </div>
+
 <!-- ADMIN LOGIN (modal style card) -->
 <div id="admin" class="card hidden">
     <h2>Admin Login</h2>
     <input id="adminPass" placeholder="Password" type="password" style="width:100%;padding:10px;margin-top:8px">
     <div class="adminBtns">
-        <button class="btn small" onclick="unlockAdmin()"style="background:#222">Login</button>
+        <button class="btn small" onclick="unlockAdmin()" style="background:#222">Login</button>
         <button class="btn small" onclick="closeAdminLogin()" style="background:#222">Close</button>
     </div>
     <p id="adminLoginMsg" style="color:red;margin-top:10px"></p>
 </div>
+
 <!-- ADMIN PANEL -->
 <div id="adminPanel" class="card hidden">
     <h2>Results</h2>
     <div id="results"></div>
 
     <div class="adminBtns">
-        <button class="btn" onclick="downloadVotes()"style="background:#222">Download Votes (.xlsx)</button>
+        <button class="btn" onclick="downloadVotes()" style="background:#222">Download Votes (.xlsx)</button>
         <button class="btn" onclick="resetVotes()" style="background:#222;">Reset Votes</button>
         <button class="btn" onclick="closeAdminPanel()" style="background:#777;">Close Admin Panel</button>
     </div>
@@ -139,7 +253,7 @@ th,td{padding:10px;border-bottom:1px solid #ddd}
         </label>
     </div>
     <div style="margin-top:8px;display:flex;gap:8px">
-        <button class="btn" onclick="addCandidate()"style="background:#222">Add Candidate</button>
+        <button class="btn" onclick="addCandidate()" style="background:#222">Add Candidate</button>
         <button class="btn" onclick="clearCandidateForm()" style="background:#888">Clear</button>
     </div>
  <div id="candTable"></div>
@@ -149,7 +263,19 @@ th,td{padding:10px;border-bottom:1px solid #ddd}
 /* --------------------
    BASIC UI TOGGLING
 ----------------------*/
-function toggleForm(){document.getElementById('authBox').classList.toggle('active')}
+function toggleForm(){
+  document.getElementById('authBox').classList.toggle('active');
+  // On small screens we want to show register by switching show/hide
+  const cont = document.getElementById('authBox');
+  if(cont.classList.contains('active')){
+    // show register, hide login
+    cont.querySelector('.Login').style.display='none';
+    cont.querySelector('.Register').style.display='block';
+  } else {
+    cont.querySelector('.Login').style.display='block';
+    cont.querySelector('.Register').style.display='none';
+  }
+}
 // When opening admin login we hide voting area so only admin UI appears
 function openAdminLogin(){
     document.getElementById('vote').classList.add('hidden');
@@ -395,5 +521,3 @@ function resetVotes(){ if(!confirm('Reset all votes?')) return; localStorage.rem
 </script>
 </body>
 </html>
-
-
